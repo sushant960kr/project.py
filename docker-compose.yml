@@ -1,0 +1,33 @@
+# docker-compose.yml
+version: '3'
+
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  orchestrator:
+    build: .
+    command: python orchestrator.py
+    depends_on:
+      - rabbitmq
+
+  worker:
+    build: .
+    command: python worker.py
+    depends_on:
+      - rabbitmq
+
+  config_store:
+    build: .
+    command: python config_store.py
+    ports:
+      - "5000:5000"
+  
+  monitoring:
+    build: .
+    command: python monitoring.py
+    ports:
+      - "8000:8000"
